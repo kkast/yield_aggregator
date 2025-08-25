@@ -282,6 +282,8 @@ async function startServer() {
       console.log(`Health check: GET http://localhost:${port}/health`);
       console.log(`Opportunities: GET http://localhost:${port}/api/earn/opportunities`);
       console.log(`Match Opportunities: POST http://localhost:${port}/api/earn/opportunities/match`);
+      console.log(`User settings: GET http://localhost:${port}/api/user`);
+      console.log(`Modify User settings: POST http://localhost:${port}/api/user`);
     });
   } catch (error) {
     console.error('Failed to start API Server:', error);

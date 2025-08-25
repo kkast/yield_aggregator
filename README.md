@@ -24,16 +24,24 @@ Fetcher is in ./src/fetcher, API is in ./src/api. Common logic for providers is 
 
 One of the benefits of such approach is that Fetcher and API server can be developed independently of each other. They are in a monorepo to share common data structures and logic, but the development of new features for one isnt blocking the other service, assuming exisitng data structure isnt changed. Thus, each service can be tested independently of each other. Fetcher has its set of tests, API server has its own. The database can be populated with test data, or mocked in test files to test particular function to speed up testing.
 
+#SETUP
+npm install
 
 # DB set up
 # one-time manual setup
 psql postgres
 
 CREATE ROLE yield_user WITH LOGIN PASSWORD 'yield_password';
+
 CREATE DATABASE opportunities OWNER yield_user;
+
 ALTER ROLE yield_user CREATEDB;
 
 npx prisma migrate dev --name init
+
+npm run fetcher # fetcher
+npm run api # api
+npm run frontend # api
 
 # match logic
 
