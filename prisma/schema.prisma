@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Opportunity {
+  id        String              @id
+  name      String
+  provider  String
+  asset     String
+  chain     String
+  apr       Float
+  category  OpportunityCategory
+  liquidity String
+  riskScore Int
+  yieldDate DateTime            @default(now())
+  updatedAt DateTime            @default(now())
+  createdAt DateTime            @default(now())
+
+  @@map("opportunities")
+}
+
+enum OpportunityCategory {
+  STAKING
+  LENDING
+  VAULT
+}
+
+model UserMatch {
+  id                String   @id @default(cuid())
+  userId            String   // Dynamic user ID from JWT
+  walletBalance     Json     // Store as JSON object
+  riskTolerance     Int
+  maxAllocationPct  Int
+  investmentHorizon Int
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@unique([userId])
+  @@map("user_matches")
+}
