@@ -35,6 +35,7 @@ export default function OpportunitiesPage() {
     try {
       setLoading(true)
       setError(null)
+      console.log('fetching opportunities')
       const response = await fetch('http://localhost:3000/api/earn/opportunities')
       
       if (!response.ok) {
@@ -64,8 +65,7 @@ export default function OpportunitiesPage() {
       setError(null)
       console.log('Refreshing data...')
       
-      // Simply fetch the latest opportunities from the existing endpoint
-      await fetchOpportunities()
+      await fetchOpportunities() // Force refresh
     } catch (err) {
       console.error('Error refreshing data:', err)
       setError(err instanceof Error ? err.message : 'Failed to refresh data')

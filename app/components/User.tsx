@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { MatchRequestSchema, type MatchRequest, defaultUserData } from "../../src/types/user";
 import { getAuthToken, useDynamicContext } from '@dynamic-labs/sdk-react-core'
-import Popup from '../user/popoup'
+import Popup from '../user/popup'
 
 export default function UserForm() {
   const { user } = useDynamicContext();
@@ -17,20 +17,24 @@ export default function UserForm() {
   const [currencyOrder, setCurrencyOrder] = useState<string[]>([]);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [saveMessage, setSaveMessage] = useState<string>('');
-  
-  console.log('data', data)
-  
+
   // Fetch initial data when wallet is connected
   useEffect(() => {
-    if (!user) return;
-    console.log('user && data', user, data, user && data)
-    if (user && data) return;
+    if (!user) {
+      // Clear data when user disconnects
+      setData(null);
+      setError(null);
+      return;
+    }
     
     setLoading(true);
+    setError(null);
+    
     const token = getAuthToken()
     console.log('User token', token)
     
     const fetchUser = async () => {
+      console.log('fetching user')
       try {
         const response = await fetch('http://localhost:3000/api/user', {
           headers: {
@@ -44,32 +48,35 @@ export default function UserForm() {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         
-        const data = await response.json()
+        const responseData = await response.json()
         
-        if (data.success) {
-          if (data.data) {
-            setData(data.data as MatchRequest)
-            setCurrencyOrder(Object.keys(data.data.walletBalance))
+        if (responseData.success) {
+          console.log('responseData', responseData)
+          if (responseData.data) {
+            setData(responseData.data as MatchRequest)
+            setCurrencyOrder(Object.keys(responseData.data.walletBalance))
           } else {
             setData(defaultUserData)
             setCurrencyOrder(Object.keys(defaultUserData.walletBalance))
           }
         } else {
-          setError(data.error)
+          setError(responseData.error)
         }
-              } catch (err) {
-          setError("Failed to fetch user data");
-          console.error('Error fetching user:', err);
-          // Set default data on error to prevent hooks issues
-          setData(defaultUserData)
-        } finally {
+      } catch (err) {
+        setError("Failed to fetch user data");
+        console.error('Error fetching user:', err);
+        // Set default data on error to prevent hooks issues
+        setData(defaultUserData)
+        setCurrencyOrder(Object.keys(defaultUserData.walletBalance))
+      } finally {
         setLoading(false);
       }
     }
     
     fetchUser()
     
-  }, [user]);
+  }, [user]); // Use stable user identifier instead of entire user object
+
 
   if (!user) {
     return (
@@ -355,7 +362,7 @@ export default function UserForm() {
         {/* Save Button */}
         <div className="flex justify-end pt-4 border-t border-gray-200 mt-4">
           <button
-            onClick={() =>setShowModal(true)}
+            onClick={() => setShowModal(true)}
             disabled={saving}
             className="btn btn-primary px-6 py-2 text-sm font-medium"
           >
@@ -368,7 +375,7 @@ export default function UserForm() {
               'Save Settings'
             )}
           </button>
-        </div>
+        </div> 
       </div>
     </div>
   );

@@ -13,7 +13,6 @@ export default function Header() {
   const tabs = [
     { id: 'home', label: 'Home', href: '/' },
     { id: 'opportunities', label: 'Opportunities', href: '/opportunities' },
-    { id: 'portfolio', label: 'Portfolio', href: '/portfolio' },
     { id: 'user', label: 'User', href: '/user' },
     // Future tabs can be added here
     // { id: 'analytics', label: 'Analytics', href: '/analytics' },
@@ -22,7 +21,6 @@ export default function Header() {
   const getActiveTab = () => {
     if (pathname === '/') return 'home'
     if (pathname === '/opportunities') return 'opportunities'
-    if (pathname === '/portfolio') return 'portfolio'
     if (pathname === '/user') return 'user'
     return 'home' // fallback
   }
@@ -33,22 +31,22 @@ export default function Header() {
       console.log('User connected:', user)
       console.log('Wallet:', primaryWallet?.address)
       
-      // Store wallet address in localStorage
-      localStorage.setItem('wallet_address', primaryWallet?.address || '')
+      // Only store if not already stored to prevent unnecessary updates
+      const currentAddress = localStorage.getItem('wallet_address')
+      if (currentAddress !== primaryWallet?.address) {
+        localStorage.setItem('wallet_address', primaryWallet?.address || '')
+        console.log('Wallet address stored in localStorage')
+      }
       
       // Try to get JWT token from Dynamic
-      // Note: This is a workaround since Dynamic doesn't expose JWT directly
-      // In a real implementation, you'd get this from Dynamic's auth flow
       const jwt = getAuthToken()
       console.log('jwt', jwt)
-      
-      console.log('Wallet address and JWT token stored in localStorage')
     } else {
       // Clear data when disconnected
       localStorage.removeItem('wallet_address')
       localStorage.removeItem('dynamic_auth_token')
     }
-  }, [user, primaryWallet])
+  }, [user?.userId, primaryWallet?.address]) // Use stable identifiers instead of full objects
 
   return (
     <header className="header">
