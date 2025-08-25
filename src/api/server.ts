@@ -109,12 +109,24 @@ async function matchOpportunities(matchRequest: z.infer<typeof MatchRequestSchem
     if(matchRequest.walletBalance[opportunity.asset]) {
       return true;
     }
-    if(opportunity.chain === 'solana' && !matchRequest.walletBalance.SOL) {
+    // Make SOL case-insensitive by checking all keys in walletBalance
+    if (
+      opportunity.chain === 'solana' &&
+      !Object.keys(matchRequest.walletBalance).some(
+        (key) => key.toLowerCase() === 'sol'
+      )
+    ) {
       return false;
     }
-    if(opportunity.chain === 'ethereum' && !matchRequest.walletBalance.ETH) {
+    if (
+      opportunity.chain === 'ethereum' &&
+      !Object.keys(matchRequest.walletBalance).some(
+        (key) => key.toLowerCase() === 'eth'
+      )
+    ) {
       return false;
     }
+
     
     return true;
   })

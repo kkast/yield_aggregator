@@ -14,6 +14,7 @@ export default function Header() {
     { id: 'home', label: 'Home', href: '/' },
     { id: 'opportunities', label: 'Opportunities', href: '/opportunities' },
     { id: 'user', label: 'User', href: '/user' },
+    { id: 'matches', label: 'My Matches', href: '/matches' },
     // Future tabs can be added here
     // { id: 'analytics', label: 'Analytics', href: '/analytics' },
   ]
@@ -22,6 +23,7 @@ export default function Header() {
     if (pathname === '/') return 'home'
     if (pathname === '/opportunities') return 'opportunities'
     if (pathname === '/user') return 'user'
+    if (pathname === '/matches') return 'matches'
     return 'home' // fallback
   }
 
